@@ -26,8 +26,8 @@ COPY . .
 # Upgrade pip
 RUN pip install --upgrade pip
 
-# Install dependencies
-RUN pip install -r requirements.txt
+# Install dependencies (use production requirements)
+RUN pip install -r requirements_production.txt
 
 # Expose the required port (Change this if needed)
 EXPOSE 8000

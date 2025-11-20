@@ -13,7 +13,14 @@ class DetectionFactory:
     def create_detector():
         """Create the best available detector"""
         
-        # Try dlib first (original implementation)
+        # Check if we're in production environment
+        import os
+        if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DJANGO_SETTINGS_MODULE', '').endswith('production'):
+            logger.info("Using production detector for Railway deployment")
+            from .detection_production import get_production_detector
+            return get_production_detector()
+        
+        # Try dlib first (original implementation - for local development)
         try:
             import dlib
             from .original_detection import DlibDrowsinessDetector  # We'll create this
@@ -28,13 +35,13 @@ class DetectionFactory:
             logger.info("Using MediaPipe-based detection")
             return MediaPipeDrowsinessDetector()
         except ImportError:
-            logger.warning("MediaPipe not available, using basic OpenCV")
+            logger.warning("MediaPipe not available, using production detector")
             
-        # Fallback to basic OpenCV
+        # Fallback to production detector
         try:
-            from .basic_detection import BasicOpenCVDetector  # We'll create this
-            logger.info("Using basic OpenCV detection")
-            return BasicOpenCVDetector()
+            from .detection_production import get_production_detector
+            logger.info("Using production detector as fallback")
+            return get_production_detector()
         except ImportError:
             logger.error("No detection methods available!")
             raise ImportError("No computer vision libraries available for detection")
