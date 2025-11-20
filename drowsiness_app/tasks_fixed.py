@@ -3,7 +3,11 @@ Fixed tasks.py - Resolves async context errors and improves detection
 """
 import os
 import cv2
-import pygame.mixer
+try:
+    import pygame.mixer
+    PYGAME_AVAILABLE = True
+except ImportError:
+    PYGAME_AVAILABLE = False
 import time
 import asyncio
 from threading import Thread
@@ -27,13 +31,16 @@ def drowsiness_detection_task_sync(
     
     # Initialize pygame for audio alerts
     try:
-        pygame.mixer.init()
-        audio_path = os.path.join(BASE_DIR, "static", "music.wav")
-        if os.path.exists(audio_path):
-            pygame.mixer.music.load(audio_path)
-            print("✅ Audio system initialized")
+        if PYGAME_AVAILABLE:
+            pygame.mixer.init()
+            audio_path = os.path.join(BASE_DIR, "static", "music.wav")
+            if os.path.exists(audio_path):
+                pygame.mixer.music.load(audio_path)
+                print("✅ Audio system initialized")
+            else:
+                print("⚠️ Audio file not found, alerts will be silent")
         else:
-            print("⚠️ Audio file not found, alerts will be silent")
+            print("⚠️ Pygame not available - audio alerts disabled")
     except Exception as e:
         print(f"⚠️ Audio initialization failed: {e}")
 
@@ -223,8 +230,11 @@ def play_alert_sync(message):
     """Play audio alert synchronously"""
     try:
         # Play audio file
-        pygame.mixer.music.play()
-        print("🔊 Audio alert played")
+        if PYGAME_AVAILABLE:
+            pygame.mixer.music.play()
+            print("🔊 Audio alert played")
+        else:
+            print("⚠️ Audio alert skipped - pygame not available")
     except Exception as e:
         print(f"⚠️ Audio playback failed: {e}")
     

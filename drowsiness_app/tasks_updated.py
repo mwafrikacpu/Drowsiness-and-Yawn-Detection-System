@@ -5,7 +5,11 @@ Compatible with Windows installations that may not have dlib
 import asyncio
 import os
 import cv2
-import pygame.mixer
+try:
+    import pygame.mixer
+    PYGAME_AVAILABLE = True
+except ImportError:
+    PYGAME_AVAILABLE = False
 import numpy as np
 from asgiref.sync import sync_to_async
 from django.core.mail import EmailMessage

@@ -5,7 +5,11 @@ import asyncio
 import logging
 from typing import Dict, Any, Optional
 import cv2
-import pygame.mixer
+try:
+    import pygame.mixer
+    PYGAME_AVAILABLE = True
+except ImportError:
+    PYGAME_AVAILABLE = False
 import os
 from asgiref.sync import sync_to_async
 
@@ -128,21 +132,26 @@ class DetectionEngine:
     async def _initialize_audio(self) -> None:
         """Initialize audio system"""
         try:
-            pygame.mixer.init()
-            
-            # Try to load audio file
-            base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            audio_path = os.path.join(base_dir, "static", "music.wav")
-            
-            if os.path.exists(audio_path):
-                pygame.mixer.music.load(audio_path)
-                self.audio_initialized = True
-                logger.info("Audio system initialized successfully")
+            if PYGAME_AVAILABLE:
+                pygame.mixer.init()
+                
+                # Try to load audio file
+                base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+                audio_path = os.path.join(base_dir, "static", "music.wav")
+                
+                if os.path.exists(audio_path):
+                    pygame.mixer.music.load(audio_path)
+                    self.audio_initialized = True
+                    logger.info("Audio system initialized successfully")
+                else:
+                    logger.warning(f"Audio file not found: {audio_path}")
             else:
-                logger.warning(f"Audio file not found: {audio_path}")
+                logger.info("Pygame not available - audio alerts disabled")
+                self.audio_initialized = False
                 
         except Exception as e:
             logger.warning(f"Audio initialization failed: {e}")
+            self.audio_initialized = False
             # Don't raise exception - audio is not critical
     
     async def _monitoring_loop(
@@ -257,8 +266,10 @@ class DetectionEngine:
     async def _play_audio_alert(self) -> None:
         """Play audio alert"""
         try:
-            if self.audio_initialized:
+            if self.audio_initialized and PYGAME_AVAILABLE:
                 pygame.mixer.music.play()
+            else:
+                logger.info("Audio alert skipped - pygame not available")
             
             # Optional: Text-to-speech
             await self._play_tts_alert()
