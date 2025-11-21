@@ -8,7 +8,7 @@ from pathlib import Path
 def create_production_files():
     """Create all necessary production files"""
     
-    print("🚀 Creating Production Deployment Files")
+    print(" Creating Production Deployment Files")
     print("=" * 45)
     
     # 1. Create production settings
@@ -107,7 +107,7 @@ print("🚀 Production settings loaded successfully!")
     settings_file = Path('drowsiness_project/settings_production.py')
     with open(settings_file, 'w') as f:
         f.write(production_settings)
-    print(f"✅ Created: {settings_file}")
+    print(f" Created: {settings_file}")
     
     # 2. Create Railway configuration
     railway_config = '''{
@@ -124,7 +124,7 @@ print("🚀 Production settings loaded successfully!")
     
     with open('railway.json', 'w') as f:
         f.write(railway_config)
-    print("✅ Created: railway.json")
+    print(" Created: railway.json")
     
     # 3. Create Procfile
     procfile_content = '''web: gunicorn drowsiness_project.wsgi:application --bind 0.0.0.0:$PORT
@@ -132,12 +132,12 @@ worker: python manage.py runserver'''
     
     with open('Procfile', 'w') as f:
         f.write(procfile_content)
-    print("✅ Created: Procfile")
+    print(" Created: Procfile")
     
     # 4. Create runtime.txt
     with open('runtime.txt', 'w') as f:
         f.write('python-3.11.6\\n')
-    print("✅ Created: runtime.txt")
+    print("Created: runtime.txt")
     
     # 5. Update requirements.txt
     additional_requirements = '''
@@ -150,7 +150,7 @@ dj-database-url==2.1.0
     
     with open('requirements.txt', 'a') as f:
         f.write(additional_requirements)
-    print("✅ Updated: requirements.txt")
+    print("Updated: requirements.txt")
     
     # 6. Create health check view
     health_check_view = '''

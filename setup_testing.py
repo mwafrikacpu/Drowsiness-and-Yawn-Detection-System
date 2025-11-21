@@ -8,12 +8,12 @@ import sys
 
 def install_test_requirements():
     """Install testing requirements"""
-    print("📦 Installing testing requirements...")
+    print(" Installing testing requirements...")
     try:
         subprocess.check_call([
             sys.executable, "-m", "pip", "install", "-r", "requirements_test.txt"
         ])
-        print("  ✅ Testing requirements installed successfully")
+        print("   Testing requirements installed successfully")
         return True
     except subprocess.CalledProcessError as e:
         print(f"  ❌ Failed to install requirements: {e}")
@@ -30,7 +30,7 @@ def setup_test_database():
         subprocess.check_call([
             sys.executable, "manage.py", "migrate", "--run-syncdb"
         ])
-        print("  ✅ Test database setup completed")
+        print("   Test database setup completed")
         return True
     except subprocess.CalledProcessError as e:
         print(f"  ❌ Database setup failed: {e}")
@@ -38,7 +38,7 @@ def setup_test_database():
 
 def run_tests():
     """Run the test suite"""
-    print("🧪 Running test suite...")
+    print(" Running test suite...")
     try:
         # Run pytest with coverage
         result = subprocess.run([
@@ -56,7 +56,7 @@ def run_tests():
             print(result.stderr)
         
         if result.returncode == 0:
-            print("  ✅ All tests passed!")
+            print("   All tests passed!")
             return True
         else:
             print("  ❌ Some tests failed")

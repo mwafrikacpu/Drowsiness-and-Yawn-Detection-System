@@ -1,2 +1,2 @@
-web: DJANGO_SETTINGS_MODULE=drowsiness_project.settings_production gunicorn drowsiness_project.wsgi:application --bind 0.0.0.0:$PORT
-worker: DJANGO_SETTINGS_MODULE=drowsiness_project.settings_production python manage.py runserver
+web: export DJANGO_SETTINGS_MODULE=drowsiness_project.settings_production && gunicorn drowsiness_project.wsgi:application --bind 0.0.0.0:$PORT
+worker: export DJANGO_SETTINGS_MODULE=drowsiness_project.settings_production && python manage.py runserver
